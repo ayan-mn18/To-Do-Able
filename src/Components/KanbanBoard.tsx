@@ -58,7 +58,16 @@ const KanbanBoard = () => {
             }
         })
     );
-  return (
+
+    const updateColumnTitle = (id: Id, title: string) => {
+        const updatedColumns = columns.map((col) => {
+            if(col.id === id)   return {id, title}
+            else return col;
+        });
+
+        setColumns(updatedColumns);
+    }
+    return (
     <div className="
         m-auto
         flex
@@ -75,7 +84,7 @@ const KanbanBoard = () => {
                 <div className="flex gap-4">
                     <SortableContext items={columnIds}>
                         {columns.map((col) => (
-                            <ColumnContainer deleteColumn={deleteColumn} column={col} key={col.id} />
+                            <ColumnContainer deleteColumn={deleteColumn} column={col} key={col.id} updateColumnTitle={updateColumnTitle}/>
                         ))}
                     </SortableContext>
                 </div>
@@ -106,6 +115,7 @@ const KanbanBoard = () => {
                     <ColumnContainer
                         column={activeColumn} 
                         deleteColumn={deleteColumn} 
+                        updateColumnTitle={updateColumnTitle}
                     />
                 )}
                 </DragOverlay>,
