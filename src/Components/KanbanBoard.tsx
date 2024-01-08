@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import PlusIcon from "../icons/PlusIcon"
-import { Column, Id } from "../types";
+import { Column, Id, Task } from "../types";
 import ColumnContainer from "./ColumnContainer";
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
@@ -10,6 +10,8 @@ const KanbanBoard = () => {
     const [columns, setColumns] = useState<Column[]>([]);
     const columnIds = useMemo(() => columns.map(col => col.id), [columns]);
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
+    const [tasks, setTasks] = useState<Task[]>([]);
+
 
     const deleteColumn = (id:Id) => {
         console.log("delete columns")
@@ -67,6 +69,21 @@ const KanbanBoard = () => {
 
         setColumns(updatedColumns);
     }
+
+    const createTasks = (columndId: Id) => {
+        const newTask:Task = {
+            id: generateRandomId(),
+            columnId: columndId,
+            content: `Task ${tasks.length + 1}`
+        }
+
+        setTasks([ ...tasks, newTask ]);
+    }
+
+    const deleteTask = (taskId: Id) => {
+        const updatedTasks = tasks.filter(task => task.id !== taskId);
+        setTasks(updatedTasks);
+    }
     return (
     <div className="
         m-auto
@@ -84,7 +101,7 @@ const KanbanBoard = () => {
                 <div className="flex gap-4">
                     <SortableContext items={columnIds}>
                         {columns.map((col) => (
-                            <ColumnContainer deleteColumn={deleteColumn} column={col} key={col.id} updateColumnTitle={updateColumnTitle}/>
+                            <ColumnContainer deleteColumn={deleteColumn} column={col} key={col.id} updateColumnTitle={updateColumnTitle} createTask={createTasks} tasks={tasks.filter(task => task.columnId === col.id)} deleteTask={deleteTask}/>
                         ))}
                     </SortableContext>
                 </div>
@@ -116,6 +133,9 @@ const KanbanBoard = () => {
                         column={activeColumn} 
                         deleteColumn={deleteColumn} 
                         updateColumnTitle={updateColumnTitle}
+                        createTask={createTasks}
+                        tasks={tasks.filter(task => task.columnId === activeColumn.id)}
+                        deleteTask={deleteTask}
                     />
                 )}
                 </DragOverlay>,
