@@ -84,6 +84,15 @@ const KanbanBoard = () => {
         const updatedTasks = tasks.filter(task => task.id !== taskId);
         setTasks(updatedTasks);
     }
+
+    const updateTask = (taskId: Id, content: string) => {
+        const updatedTasks = tasks.map((task) => {
+            if(task.id === taskId) return { ...task, content}
+            else return task;
+        });
+
+        setTasks(updatedTasks);
+    }
     return (
     <div className="
         m-auto
@@ -101,7 +110,7 @@ const KanbanBoard = () => {
                 <div className="flex gap-4">
                     <SortableContext items={columnIds}>
                         {columns.map((col) => (
-                            <ColumnContainer deleteColumn={deleteColumn} column={col} key={col.id} updateColumnTitle={updateColumnTitle} createTask={createTasks} tasks={tasks.filter(task => task.columnId === col.id)} deleteTask={deleteTask}/>
+                            <ColumnContainer deleteColumn={deleteColumn} column={col} key={col.id} updateColumnTitle={updateColumnTitle} createTask={createTasks} tasks={tasks.filter(task => task.columnId === col.id)} deleteTask={deleteTask} updateTask={updateTask}/>
                         ))}
                     </SortableContext>
                 </div>
@@ -136,6 +145,7 @@ const KanbanBoard = () => {
                         createTask={createTasks}
                         tasks={tasks.filter(task => task.columnId === activeColumn.id)}
                         deleteTask={deleteTask}
+                        updateTask={updateTask}
                     />
                 )}
                 </DragOverlay>,
