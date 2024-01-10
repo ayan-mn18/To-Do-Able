@@ -4,7 +4,9 @@ const bd = require("body-parser");
 const colors = require("colors");
 const dotenv = require("dotenv");
 const cors = require("cors");
+
 const { dbConnection } = require("./config/db.config");
+const router = require("./controller");
 
 dotenv.config();
 const { PORT } = process.env;
@@ -16,6 +18,7 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(bd.urlencoded({ extended: false }));
 app.use(bd.json());
+app.use("/api", router);
 
 dbConnection();
 
