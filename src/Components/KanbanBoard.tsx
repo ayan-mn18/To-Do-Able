@@ -7,11 +7,94 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
 
+
+const generateRandomId = () => {
+    return Math.floor(Math.random() * 10001);
+}
+
+const initialColumns: Column[] = [
+    {
+      id: generateRandomId(),
+      title: 'To Do',
+    },
+    {
+      id: generateRandomId(),
+      title: 'In Progress',
+    },
+    {
+      id: generateRandomId(),
+      title: 'Done',
+    },
+  ];
+
+  const initialTasks: Task[] = [
+    {
+      id: generateRandomId(),
+      columnId: initialColumns[0].id,
+      content: 'Go to the gym',
+      originalContent: 'Go to the gym',
+    },
+    {
+      id: generateRandomId(),
+      columnId: initialColumns[0].id,
+      content: 'Call mom',
+      originalContent: 'Call mom',
+    },
+    {
+      id: generateRandomId(),
+      columnId: initialColumns[1].id,
+      content: 'Prepare for meeting with client',
+      originalContent: 'Prepare for meeting with client',
+    },
+    {
+      id: generateRandomId(),
+      columnId: initialColumns[1].id,
+      content: 'Review project timeline',
+      originalContent: 'Review project timeline',
+    },
+    {
+      id: generateRandomId(),
+      columnId: initialColumns[2].id,
+      content: 'Buy earrings for mom',
+      originalContent: 'Buy earrings for mom',
+    },
+    {
+      id: generateRandomId(),
+      columnId: initialColumns[2].id,
+      content: 'Shop for groceries',
+      originalContent: 'Shop for groceries',
+    },
+    {
+      id: generateRandomId(),
+      columnId: initialColumns[0].id,
+      content: 'Read a book',
+      originalContent: 'Read a book',
+    },
+    {
+      id: generateRandomId(),
+      columnId: initialColumns[1].id,
+      content: 'Write report',
+      originalContent: 'Write report',
+    },
+    {
+      id: generateRandomId(),
+      columnId: initialColumns[2].id,
+      content: 'Buy birthday gift for friend',
+      originalContent: 'Buy birthday gift for friend',
+    },
+    {
+      id: generateRandomId(),
+      columnId: initialColumns[2].id,
+      content: 'Pick up dry cleaning',
+      originalContent: 'Pick up dry cleaning',
+    },
+  ];
+
 const KanbanBoard = () => {
-    const [columns, setColumns] = useState<Column[]>([]);
+    const [columns, setColumns] = useState<Column[]>(initialColumns);
     const columnIds = useMemo(() => columns.map(col => col.id), [columns]);
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
-    const [tasks, setTasks] = useState<Task[]>([]);
+    const [tasks, setTasks] = useState<Task[]>(initialTasks);
     const [activeTask, setActiveTask] = useState<Task | null>(null);
 
 
@@ -212,10 +295,6 @@ const KanbanBoard = () => {
         </DndContext>
     </div>
   )
-}
-
-const generateRandomId = () => {
-    return Math.floor(Math.random() * 10001);
 }
 
 export default KanbanBoard;
