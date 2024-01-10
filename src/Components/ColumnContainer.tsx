@@ -1,8 +1,8 @@
-import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import TrashIcon from "../icons/TrashIcon";
 import { Column, Id, Task } from "../types"
 import { CSS } from '@dnd-kit/utilities';
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import PlusIcon from "../icons/PlusIcon";
 import TaskCard from "./TaskCard";
 
@@ -19,6 +19,10 @@ interface Props {
 const ColumnContainer = (props: Props) => {
     const {column, deleteColumn, updateColumnTitle, createTask, tasks, deleteTask, updateTask} = props;
     const [editMode, setEditMode] = useState(false);
+
+    const taskIds = useMemo(() => {
+        return tasks.map(task => task.id)
+    }, [tasks]);
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
         id: column.id,
@@ -101,7 +105,7 @@ const ColumnContainer = (props: Props) => {
                     rounded-full
                     "
                     >
-                        {0}
+                        {tasks.length}
                     </div>
                     {!editMode && column.title}
                     {editMode && 
@@ -132,9 +136,11 @@ const ColumnContainer = (props: Props) => {
                 </button>
             </div>
             <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto" >
-                {tasks.map(task => (
-                    <TaskCard key={task.id} task={task} deleteTask={deleteTask} updateTask={updateTask}/>
-                ))}
+                <SortableContext items={taskIds}>
+                    {tasks.map(task => (
+                        <TaskCard key={task.id} task={task} deleteTask={deleteTask} updateTask={updateTask}/>
+                    ))}
+                </SortableContext>
             </div>
             <button
              className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover:bg-mainBackgroundColor hover:text-rose-500 active:bg-black" onClick={() => createTask(column.id)}
