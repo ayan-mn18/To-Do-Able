@@ -2,6 +2,7 @@ const express = require("express");
 const User = require("../models/User");
 
 const responseMaker = require("../services/responseMaker");
+const { Column } = require("../models");
 
 const router = express.Router();
 
@@ -24,7 +25,7 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
     try {
         const { emailId, password } = req.body;
-        const user = await User.findOne({ emailId });
+        let user = await User.findOne({ emailId });
         console.log(user)
 
         if (!user) {
@@ -37,7 +38,20 @@ router.post("/login", async (req, res) => {
             res.status(500).json(responseMaker("Incorrect Password", { emailId }, false));
         }
 
-        res.status(200).json(responseMaker("Logged in successfully!", { emailId }, true));
+        let loginDetails = {
+            "user": {},
+            "columns": {
+                "tasks": {}
+            }
+        };
+
+        const columns = await Column.find({ userId: user._id });
+
+        loginDetails.user = user;
+        loginDetails.columns = columns;
+
+        user.password = null;
+        res.status(200).json(responseMaker("Logged in successfully!", { loginDetails }, true));
     } catch (error) {
         res.status(500).json(responseMaker(error.message, {}, false));
     }
