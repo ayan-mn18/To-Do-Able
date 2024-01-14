@@ -2,7 +2,7 @@ const express = require("express");
 const User = require("../models/User");
 
 const responseMaker = require("../services/responseMaker");
-const { Column } = require("../models");
+const { Column, Task } = require("../models");
 
 const router = express.Router();
 
@@ -26,29 +26,36 @@ router.post("/login", async (req, res) => {
     try {
         const { emailId, password } = req.body;
         let user = await User.findOne({ emailId });
-        console.log(user)
 
         if (!user) {
             res.status(500).json(responseMaker("User Doesn't Exist", { emailId }, false));
+            return;
         }
 
         const validPwd = user.verifyPasswordSync(password);
 
         if (!validPwd) {
             res.status(500).json(responseMaker("Incorrect Password", { emailId }, false));
+            return;
         }
 
         let loginDetails = {
             "user": {},
-            "columns": {
-                "tasks": {}
-            }
+            "columns": {},
+            "tasks": {}
         };
 
         const columns = (await Column.find({ userId: user._id })).sort((a, b) => a.index - b.index);
 
+        let tasks = [];
+        await Promise.all(columns.map(async (col) => {
+            let task = await Task.find({ columnId: col.id });
+            tasks.push(task);
+        }));
+
         loginDetails.user = user;
         loginDetails.columns = columns;
+        loginDetails.tasks = tasks;
 
         user.password = null;
         res.status(200).json(responseMaker("Logged in successfully!", { loginDetails }, true));

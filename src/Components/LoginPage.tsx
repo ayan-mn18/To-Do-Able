@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axiosService from '../Services/axiosService';
+import { AxiosError, AxiosResponse } from 'axios';
+import localStorageService from '../Services/localStorageServices';
 
 interface LoginProps {
   openModal: (content: React.ReactNode) => void;
@@ -10,10 +13,23 @@ const LoginPage: React.FC<LoginProps> = ({openModal}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const navigator = useNavigate();
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    openModal(<p>Incorrect email or password</p>);
-    console.log('Logging in with:', email, password);
+    try {
+      const response = await axiosService<any>("/auth/login",  'post',{ emailId: email, password: password });
+      if(response.data.success){
+        localStorageService.setItem("user", response.data.body.loginDetails.user);
+        localStorageService.setItem("columns", response.data.body.loginDetails.columns);
+        localStorageService.setItem("tasks", response.data.body.loginDetails.tasks);
+        navigator("/kanban")
+      }
+      console.log('Logging in with:', email);
+    } catch (error: AxiosError) {
+      console.error('Login error:', error);
+      openModal(<p>{error?.response?.data.message}</p>)
+    }
   };
 
   return (

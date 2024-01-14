@@ -77,7 +77,8 @@ router.delete("/", async (req, res) => {
         }
         let taskIdToBeDeleted = (await Task.find({ columnId: columnId })).map((t) => ({ id: t._id }));
 
-        await Task.deleteMany({ $or: taskIdToBeDeleted });
+        if (taskIdToBeDeleted && taskIdToBeDeleted.length > 0)
+            await Task.deleteMany({ $or: taskIdToBeDeleted });
 
         await Column.deleteOne({ _id: columnId });
 
