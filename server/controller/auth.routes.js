@@ -45,7 +45,7 @@ router.post("/login", async (req, res) => {
             }
         };
 
-        const columns = await Column.find({ userId: user._id });
+        const columns = (await Column.find({ userId: user._id })).sort((a, b) => a.index - b.index);
 
         loginDetails.user = user;
         loginDetails.columns = columns;
