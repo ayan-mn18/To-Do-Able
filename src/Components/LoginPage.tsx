@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axiosService from '../Services/axiosService';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
 import localStorageService from '../Services/localStorageServices';
 
 interface LoginProps {
