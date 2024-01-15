@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axiosService from '../Services/axiosService';
 import { AxiosError } from 'axios';
@@ -15,6 +15,11 @@ const LoginPage: React.FC<LoginProps> = ({openModal, setIsLoggedIn}) => {
   const [password, setPassword] = useState('');
 
   const navigator = useNavigate();
+
+  useEffect(() => {
+    const user = localStorageService.isLoggedIn();
+    if(user)  setIsLoggedIn(true);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
