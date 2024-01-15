@@ -6,10 +6,16 @@ import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, P
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
+import localStorageService from "../Services/localStorageServices";
+import { useNavigate } from "react-router-dom";
 
 
 const generateRandomId = () => {
     return Math.floor(Math.random() * 10001);
+}
+
+interface KanbanProps {
+    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const initialColumns: Column[] = [
@@ -90,12 +96,14 @@ const initialColumns: Column[] = [
     },
   ];
 
-const KanbanBoard = () => {
+const KanbanBoard= ({setIsLoggedIn}: KanbanProps) => {
     const [columns, setColumns] = useState<Column[]>(initialColumns);
     const columnIds = useMemo(() => columns.map(col => col.id), [columns]);
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
     const [tasks, setTasks] = useState<Task[]>(initialTasks);
     const [activeTask, setActiveTask] = useState<Task | null>(null);
+
+    const navigate = useNavigate();
 
 
     const deleteColumn = (id:Id) => {
@@ -232,6 +240,12 @@ const KanbanBoard = () => {
             })
         }
     }
+
+    const logout = () => {
+        localStorageService.logout();
+        setIsLoggedIn(false);
+        navigate("/login");
+    }
     return (
     <div className="
         m-auto
@@ -243,6 +257,12 @@ const KanbanBoard = () => {
         overflow-y-hidden
         px-[40px]
     ">
+         <button
+            className="absolute top-4 right-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md"
+            onClick={logout}
+            >
+            Logout
+        </button>
         
         <DndContext sensors={sensors} onDragStart={dragStart} onDragEnd={dragEnd} onDragOver={dragOver}>
             <div className="m-auto flex gap-4">

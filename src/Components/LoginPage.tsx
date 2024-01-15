@@ -6,10 +6,11 @@ import localStorageService from '../Services/localStorageServices';
 
 interface LoginProps {
   openModal: (content: React.ReactNode) => void;
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 
-const LoginPage: React.FC<LoginProps> = ({openModal}) => {
+const LoginPage: React.FC<LoginProps> = ({openModal, setIsLoggedIn}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -23,7 +24,8 @@ const LoginPage: React.FC<LoginProps> = ({openModal}) => {
         localStorageService.setItem("user", response.data.body.loginDetails.user);
         localStorageService.setItem("columns", response.data.body.loginDetails.columns);
         localStorageService.setItem("tasks", response.data.body.loginDetails.tasks);
-        navigator("/kanban")
+        setIsLoggedIn(true);
+        navigator("/kanban");
       }
       console.log('Logging in with:', email);
     } catch (error: AxiosError) {

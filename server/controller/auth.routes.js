@@ -18,7 +18,7 @@ router.post("/signup", async (req, res) => {
             res.status(200).json(responseMaker("Welcome to Kanban To-Do-Able!", newUser, true));
         }
     } catch (error) {
-        res.status(500).json(responseMaker(error.message, {}, false));
+        res.status(203).json(responseMaker(error.message, {}, false));
     }
 });
 

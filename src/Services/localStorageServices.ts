@@ -14,6 +14,11 @@ const localStorageService = {
       user = user ? JSON.parse(user) : null;
       if(user)  return true;
       return false;
+    },
+    logout: (): void => {
+      localStorage.removeItem("user");
+      localStorage.removeItem("columns");
+      localStorage.removeItem("tasks");      
     }
   };
   

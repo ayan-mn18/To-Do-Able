@@ -5,14 +5,13 @@ import SignupPage from './Components/SignUp';
 import LoginPage from './Components/LoginPage';
 import Modal from './Components/Modal';
 import React, { useState } from 'react';
-import localStorageService from './Services/localStorageServices';
 
 function App() {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
-
-  const userLoggedIn = localStorageService.isLoggedIn();
-  console.log("IsloggedIn: ", userLoggedIn)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  console.log("IsloggedIn: ", isLoggedIn)
   const openModal = (content: React.ReactNode) => {
     setModalContent(content);
     setShowModal(true);
@@ -26,11 +25,14 @@ function App() {
     <>
        <Router>
         <Routes>
-          <Route path="/kanban" element={<KanbanBoard />} />
-          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/kanban" element={<KanbanBoard setIsLoggedIn={setIsLoggedIn} />} />
+          <Route 
+            path="/signup" 
+            element={isLoggedIn ? <Navigate to="/kanban" /> :<SignupPage openModal={openModal} />}
+          />
           <Route
             path="/login"
-            element={userLoggedIn ? <Navigate to="/kanban" /> :<LoginPage openModal={openModal}/>}
+            element={isLoggedIn ? <Navigate to="/kanban" /> :<LoginPage setIsLoggedIn={setIsLoggedIn} openModal={openModal}/>}
           />
           <Route path="*" element={<Navigate to="/signup" />} />
         </Routes>
