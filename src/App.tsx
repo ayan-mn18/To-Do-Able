@@ -25,7 +25,7 @@ function App() {
     <>
        <Router>
         <Routes>
-          <Route path="/kanban" element={<KanbanBoard setIsLoggedIn={setIsLoggedIn} />} />
+          <Route path="/kanban" element={ isLoggedIn ? <KanbanBoard setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/login" />}/>
           <Route 
             path="/signup" 
             element={isLoggedIn ? <Navigate to="/kanban" /> :<SignupPage openModal={openModal} />}

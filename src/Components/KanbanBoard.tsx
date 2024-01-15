@@ -18,15 +18,15 @@ interface KanbanProps {
     setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const initialColumns: Column[] = localStorageService.getColumns();
+// const initialColumns: Column[] = localStorageService.getColumns();
 
-  const initialTasks: Task[] = localStorageService.getTasks();
+// const initialTasks: Task[] = localStorageService.getTasks();
 
 const KanbanBoard= ({setIsLoggedIn}: KanbanProps) => {
-    const [columns, setColumns] = useState<Column[]>(initialColumns);
+    const [columns, setColumns] = useState<Column[]>(localStorageService.getColumns());
     const columnIds = useMemo(() => columns.map(col => col.id), [columns]);
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
-    const [tasks, setTasks] = useState<Task[]>(initialTasks);
+    const [tasks, setTasks] = useState<Task[]>(localStorageService.getTasks());
     const [activeTask, setActiveTask] = useState<Task | null>(null);
 
     const navigate = useNavigate();
