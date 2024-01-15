@@ -37,7 +37,10 @@ router.put("/update", async (req, res) => {
         const { content, taskId, tasksState } = req.body;
 
         const task = await Task.findById(taskId);
-        if (!task) res.status(500).json(responseMaker("Invalid TaskId ", { taskId }, false));
+        if (!task) {
+            res.status(500).json(responseMaker("Invalid TaskId ", { taskId }, false));
+            return;
+        }
 
         if (content) {
             task.content = content;
@@ -46,7 +49,7 @@ router.put("/update", async (req, res) => {
 
         let tasks = await Task.find({ columnId: task.columnId });
 
-        if (tasksState.length === tasks.length) {
+        if (tasksState && tasksState.length === tasks.length) {
             await Promise.all(tasks.map(async (t) => {
                 let taskDB = await Task.findById(t.id);
                 taskDB.index = tasksState.find((taskState) => taskState.id === t.id).index;

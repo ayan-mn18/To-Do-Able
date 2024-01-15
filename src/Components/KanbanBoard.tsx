@@ -18,83 +18,9 @@ interface KanbanProps {
     setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const initialColumns: Column[] = [
-    {
-      id: generateRandomId(),
-      title: 'To Do',
-    },
-    {
-      id: generateRandomId(),
-      title: 'In Progress',
-    },
-    {
-      id: generateRandomId(),
-      title: 'Done',
-    },
-  ];
+const initialColumns: Column[] = localStorageService.getColumns();
 
-  const initialTasks: Task[] = [
-    {
-      id: generateRandomId(),
-      columnId: initialColumns[0].id,
-      content: 'Go to the gym',
-      originalContent: 'Go to the gym',
-    },
-    {
-      id: generateRandomId(),
-      columnId: initialColumns[0].id,
-      content: 'Call mom',
-      originalContent: 'Call mom',
-    },
-    {
-      id: generateRandomId(),
-      columnId: initialColumns[1].id,
-      content: 'Prepare for meeting with client',
-      originalContent: 'Prepare for meeting with client',
-    },
-    {
-      id: generateRandomId(),
-      columnId: initialColumns[1].id,
-      content: 'Review project timeline',
-      originalContent: 'Review project timeline',
-    },
-    {
-      id: generateRandomId(),
-      columnId: initialColumns[2].id,
-      content: 'Buy earrings for mom',
-      originalContent: 'Buy earrings for mom',
-    },
-    {
-      id: generateRandomId(),
-      columnId: initialColumns[2].id,
-      content: 'Shop for groceries',
-      originalContent: 'Shop for groceries',
-    },
-    {
-      id: generateRandomId(),
-      columnId: initialColumns[0].id,
-      content: 'Read a book',
-      originalContent: 'Read a book',
-    },
-    {
-      id: generateRandomId(),
-      columnId: initialColumns[1].id,
-      content: 'Write report',
-      originalContent: 'Write report',
-    },
-    {
-      id: generateRandomId(),
-      columnId: initialColumns[2].id,
-      content: 'Buy birthday gift for friend',
-      originalContent: 'Buy birthday gift for friend',
-    },
-    {
-      id: generateRandomId(),
-      columnId: initialColumns[2].id,
-      content: 'Pick up dry cleaning',
-      originalContent: 'Pick up dry cleaning',
-    },
-  ];
+  const initialTasks: Task[] = localStorageService.getTasks();
 
 const KanbanBoard= ({setIsLoggedIn}: KanbanProps) => {
     const [columns, setColumns] = useState<Column[]>(initialColumns);
@@ -104,7 +30,6 @@ const KanbanBoard= ({setIsLoggedIn}: KanbanProps) => {
     const [activeTask, setActiveTask] = useState<Task | null>(null);
 
     const navigate = useNavigate();
-
 
     const deleteColumn = (id:Id) => {
         console.log("delete columns")

@@ -42,6 +42,7 @@ router.put("/update", async (req, res) => {
         let column = await Column.findById(columnId);
         if (!column) {
             res.status(500).json(responseMaker("Invalid ColumnID...", { columnId }, false));
+            return;
         }
 
         if (name) {
@@ -51,7 +52,7 @@ router.put("/update", async (req, res) => {
 
         let userColumns = await Column.find({ userId: column.userId });
 
-        if (columnState.length === userColumns.length) {
+        if (columnState && columnState.length === userColumns.length) {
             await Promise.all(userColumns.map(async (userCol) => {
                 let userColDB = await Column.findById(userCol._id);
                 userColDB.index = columnState.find((col) => col.id === userCol.id).index;

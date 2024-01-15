@@ -3,6 +3,7 @@ const User = require("../models/User");
 
 const responseMaker = require("../services/responseMaker");
 const { Column, Task } = require("../models");
+const loadDummyData = require("../services/loadDummyData");
 
 const router = express.Router();
 
@@ -14,9 +15,12 @@ router.post("/signup", async (req, res) => {
         });
         if (!newUser) {
             res.status(500).json(responseMaker("Error While creating new User!", {}, false));
-        } else {
-            res.status(200).json(responseMaker("Welcome to Kanban To-Do-Able!", newUser, true));
         }
+
+        await loadDummyData(newUser.id);
+
+        res.status(200).json(responseMaker("Welcome to Kanban To-Do-Able!", newUser, true));
+
     } catch (error) {
         res.status(203).json(responseMaker(error.message, {}, false));
     }
@@ -50,7 +54,7 @@ router.post("/login", async (req, res) => {
         let tasks = [];
         await Promise.all(columns.map(async (col) => {
             let task = await Task.find({ columnId: col.id });
-            tasks.push(task);
+            tasks.push(...task);
         }));
 
         loginDetails.user = user;
