@@ -34,7 +34,7 @@ router.post("/create", async (req, res) => {
 
 router.put("/update", async (req, res) => {
     try {
-        const { content, taskId, tasksState } = req.body;
+        const { content, taskId, tasksState, userId } = req.body;
 
         const task = await Task.findById(taskId);
         if (!task) {
@@ -47,15 +47,27 @@ router.put("/update", async (req, res) => {
             await task.save();
         }
 
-        let tasks = await Task.find({ columnId: task.columnId });
+        let tasks = await Task.find({ userId: userId });
 
         if (tasksState && tasksState.length === tasks.length) {
             await Promise.all(tasks.map(async (t) => {
                 let taskDB = await Task.findById(t.id);
-                taskDB.index = tasksState.find((taskState) => taskState.id === t.id).index;
+                let taskState = tasksState.find((taskState) => taskState.id === t.id);
+                taskDB.index = taskState.index;
+                taskDB.columnId = taskState.columnId;
                 await taskDB.save();
             }));
-            tasks = await Task.find({ columnId: task.columnId });
+            tasks = await Task.find({ userId: userId });
+            const groupedTasks = tasks.reduce((acc, task) => {
+                if (!acc[task.columnId]) {
+                    acc[task.columnId] = [];
+                }
+                acc[task.columnId].push(task);
+                return acc;
+            }, {});
+            tasks = Object.values(groupedTasks).flatMap((group) =>
+                group.sort((a, b) => a.index - b.index)
+            );
         }
         res.status(200).json(responseMaker("Task Updated successfully", { tasks, task }, true));
 

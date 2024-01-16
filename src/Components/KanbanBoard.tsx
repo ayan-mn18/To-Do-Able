@@ -8,6 +8,7 @@ import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
 import localStorageService from "../Services/localStorageServices";
 import { useNavigate } from "react-router-dom";
+import dragActionsServices from "../Services/dragActionsServices";
 
 
 const generateRandomId = () => {
@@ -55,6 +56,7 @@ const KanbanBoard= ({setIsLoggedIn}: KanbanProps) => {
     }
 
     const dragEnd = (event: DragEndEvent) => {
+        const lastActiveColumn = activeColumn;
         setActiveColumn(null);
         setActiveTask(null);
         const { active, over } = event;
@@ -74,7 +76,9 @@ const KanbanBoard= ({setIsLoggedIn}: KanbanProps) => {
                 const activeIdIndex = columns.findIndex((col) => col.id === activeId);
                 const overIdIndex = columns.findIndex((col) => col.id === overId);
     
-                return arrayMove(columns, activeIdIndex, overIdIndex);
+                const columsState = arrayMove(columns, activeIdIndex, overIdIndex);
+                dragActionsServices.onColumnsChange(columsState, lastActiveColumn);
+                return columsState;
             });
         }
     }
@@ -145,7 +149,9 @@ const KanbanBoard= ({setIsLoggedIn}: KanbanProps) => {
                 //For the case when dropping a task on another task in differen columns
                 tasks[activeIndexId].columnId = tasks[overIndexId].columnId;
 
-                return arrayMove(tasks, activeIndexId, overIndexId);
+                const tasksState = arrayMove(tasks, activeIndexId, overIndexId);
+                dragActionsServices.onTasksChange(tasksState, activeId.toString());
+                return tasksState;
             })
         }
 
@@ -157,7 +163,9 @@ const KanbanBoard= ({setIsLoggedIn}: KanbanProps) => {
                 const activeIndexId = tasks.findIndex((t) => t.id === activeId);
 
                 tasks[activeIndexId].columnId = overId;
-                return arrayMove(tasks, activeIndexId, activeIndexId);
+                const tasksState = arrayMove(tasks, activeIndexId, activeIndexId);
+                dragActionsServices.onTasksChange(tasksState, activeId.toString());
+                return tasksState;
             })
         }
     }

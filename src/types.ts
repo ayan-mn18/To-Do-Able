@@ -5,6 +5,12 @@ export type Column = {
     title: string
 }
 
+export type DBColumn = {
+    type: Id,
+    name: string,
+    index: number
+}
+
 export type Task = {
     id: Id,
     columnId: Id,
